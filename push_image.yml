@@ -2,8 +2,6 @@
 - name: Ensure Docker image is in ACR
   hosts: localhost
   gather_facts: no
-  vars:
-    user_action: "{{ user_action }}"
   collections:
     - community.docker
   tasks:
@@ -29,6 +27,7 @@
     - name: Log in to ACR
       shell: az acr login --name myACR
       register: login_result
+      no_log: true
       when: user_action == "Create"
 
     - name: Pull Docker image from public registry
