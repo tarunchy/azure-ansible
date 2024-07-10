@@ -10,3 +10,4 @@
         admin_user_enabled: true
         location: westus2
         state: present
+      when: action == "Create"
