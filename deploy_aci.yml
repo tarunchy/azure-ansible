@@ -9,7 +9,7 @@
       azure.azcollection.azure_rm_containerinstance:
         resource_group: myResourceGroup
         name: myACI
-        os_type: Linux
+        os_type: linux
         ip_address: public
         location: westus2
         containers:
