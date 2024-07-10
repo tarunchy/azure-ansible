@@ -29,7 +29,12 @@
       register: aci_info
       when: user_action == "Create"
 
+    - name: Debug ACI info
+      debug:
+        var: aci_info
+      when: user_action == "Create"
+
     - name: Print ACI URL
       debug:
-        msg: "ACI URL: http://{{ aci_info.ansible_facts.azure_containerinstances[0].ip_address }}"
+        msg: "ACI URL: http://{{ aci_info.azure_containerinstances[0].ip_address }}"
       when: user_action == "Create"
