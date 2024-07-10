@@ -5,19 +5,33 @@
   vars:
     user_action: "{{ user_action }}"
   tasks:
+    - name: Gather OS family fact
+      setup:
+        filter: ansible_os_family
+      when: user_action == 'Create'
+
     - name: Debug user_action variable
       debug:
         msg: "The user_action variable is set to: {{ user_action }}"
 
-    - name: Test simple condition
-      debug:
-        msg: "This is a test message for create action."
-      when: user_action == 'Create'
-
     - name: Ensure Azure CLI is installed
-      apt:
+      yum:
         name: azure-cli
         state: present
+      when: ansible_os_family == "RedHat" and user_action == 'Create'
+
+    - name: Ensure Docker is installed
+      yum:
+        name: docker
+        state: present
+      when: ansible_os_family == "RedHat" and user_action == 'Create'
+
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+      when: ansible_os_family == "RedHat" and user_action == 'Create'
 
     - name: Log in to Azure CLI
       shell: az login --service-principal -u "{{ azure_client_id }}" -p "{{ azure_client_secret }}" --tenant "{{ azure_tenant_id }}"
