@@ -11,6 +11,7 @@
         name: myACI
         os_type: linux
         ip_address: public
+        dns_name_label: myaci-dns-name-label  # Ensure this is unique within your region
         location: westus2
         containers:
           - name: mycontainer1
@@ -36,5 +37,5 @@
 
     - name: Print ACI URL
       debug:
-        msg: "ACI URL: http://{{ aci_info.azure_containerinstances[0].ip_address }}"
+        msg: "ACI URL: http://{{ aci_info.azure_containerinstances[0].fqdn }}"
       when: user_action == "Create"
