@@ -8,23 +8,20 @@
     - name: Gather OS family fact
       setup:
         filter: ansible_os_family
-
+      when: user_action == 'Create'
 
     - name: Debug user_action variable
       debug:
         msg: "The user_action variable is set to: {{ user_action }}"
 
-    - name: Ensure Azure CLI is installed
+    - name: Ensure Azure CLI is installed using curl
       become: yes
-      yum:
-        name: azure-cli
-        state: present
-        use_backend: dnf
-      when: ansible_os_family == "RedHat" and user_action == 'Create'
+      shell: curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+      when: user_action == 'Create'
 
     - name: Ensure resource group is present
       azure_rm_resourcegroup:
         name: myResourceGroup
         location: westus2
         state: present
-
+      when: user_action == 'Create'
