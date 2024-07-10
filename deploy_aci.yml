@@ -1,17 +1,12 @@
 ---
-- name: Deploy Azure Container Instance with a Public Image
+- name: Ensure Azure Container Instance is running
   hosts: localhost
   tasks:
-    - name: Ensure resource group
-      azure_rm_resourcegroup:
-        name: myResourceGroup
-        location: westus2
-
-    - name: Ensure Azure Container Instance exists
+    - name: Ensure ACI is present
       azure_rm_containerinstance:
         resource_group: myResourceGroup
         name: myACI
-        image: mcr.microsoft.com/azuredocs/aci-helloworld
+        image: myacr.azurecr.io/aci-helloworld:latest
         location: westus2
         os_type: Linux
         cpu_cores: 1
