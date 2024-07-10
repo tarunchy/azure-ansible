@@ -3,9 +3,10 @@
   hosts: localhost
   gather_facts: no
   tasks:
+
     - name: Ensure resource group is present
       azure_rm_resourcegroup:
         name: myResourceGroup
         location: westus2
         state: present
-      when: action == "Create"
+      when: user_action == "Create"
