@@ -46,12 +46,12 @@
       become: yes
       shell: |
         AZ_DIST=$(lsb_release -cs)
-        echo "Types: deb
-URIs: https://packages.microsoft.com/repos/azure-cli/
-Suites: ${AZ_DIST}
-Components: main
-Architectures: $(dpkg --print-architecture)
-Signed-By: /etc/apt/keyrings/microsoft.gpg" | tee /etc/apt/sources.list.d/azure-cli.sources
+        echo "Types: deb" > /etc/apt/sources.list.d/azure-cli.sources
+        echo "URIs: https://packages.microsoft.com/repos/azure-cli/" >> /etc/apt/sources.list.d/azure-cli.sources
+        echo "Suites: ${AZ_DIST}" >> /etc/apt/sources.list.d/azure-cli.sources
+        echo "Components: main" >> /etc/apt/sources.list.d/azure-cli.sources
+        echo "Architectures: $(dpkg --print-architecture)" >> /etc/apt/sources.list.d/azure-cli.sources
+        echo "Signed-By: /etc/apt/keyrings/microsoft.gpg" >> /etc/apt/sources.list.d/azure-cli.sources
       when: ansible_os_family == "Debian" and user_action == 'Create'
 
     - name: Update apt cache and install Azure CLI
