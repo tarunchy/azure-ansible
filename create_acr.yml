@@ -3,10 +3,6 @@
   hosts: localhost
   gather_facts: no
   tasks:
-    - name: Fail if action is not Create
-      fail:
-        msg: "This playbook can only be run with action='Create'. The provided action is '{{ action }}'."
-      when: action != "Create"
 
     - name: Ensure resource group is present
       azure_rm_resourcegroup:
