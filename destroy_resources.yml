@@ -2,8 +2,9 @@
 - name: Destroy Azure Resource Group and its contents
   hosts: localhost
   gather_facts: no
+  vars:
+    user_action: "{{ user_action }}"
   tasks:
-
     - name: Ensure resource group is absent
       azure_rm_resourcegroup:
         name: myResourceGroup
