@@ -3,20 +3,24 @@
   hosts: localhost
   gather_facts: no
   vars:
-    user_action: "{{ user_action | trim }}"
+    user_action: "{{ user_action | default('Create') | trim }}"
   tasks:
     - name: Debug user_action variable
       debug:
-        msg: "The user_action variable is set to: {{ user_action }}"
+        msg: "The user_action variable is set to: '{{ user_action }}'"
+
+    - name: Debug condition
+      debug:
+        msg: "Condition result: {{ user_action == 'Create' }}"
 
     - name: Test simple condition
       debug:
         msg: "This is a test message for create action."
-      when: user_action == "Create"
+      when: user_action == 'Create'
 
     - name: Ensure resource group is present
       azure_rm_resourcegroup:
         name: myResourceGroup
         location: westus2
         state: present
-      when: user_action == "Create"
+      when: user_action == 'Create'
