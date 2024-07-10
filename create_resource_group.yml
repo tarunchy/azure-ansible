@@ -1,0 +1,8 @@
+---
+- name: Create Azure Resource Group
+  hosts: localhost
+  tasks:
+    - name: Create resource group
+      azure_rm_resourcegroup:
+        name: myResourceGroup
+        location: westus2
