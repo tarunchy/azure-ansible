@@ -8,4 +8,4 @@
       azure_rm_resourcegroup:
         name: myResourceGroup
         state: absent
-      when: action == "Destroy"
+      when: user_action == "Destroy"
