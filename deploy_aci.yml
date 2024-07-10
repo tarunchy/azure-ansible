@@ -2,8 +2,9 @@
 - name: Ensure Azure Container Instance is running
   hosts: localhost
   gather_facts: no
+  vars:
+    user_action: "{{ user_action }}"
   tasks:
-
     - name: Ensure ACI is present
       azure_rm_containerinstance:
         resource_group: myResourceGroup
