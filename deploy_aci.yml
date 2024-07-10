@@ -3,6 +3,7 @@
   hosts: localhost
   gather_facts: no
   tasks:
+
     - name: Ensure ACI is present
       azure_rm_containerinstance:
         resource_group: myResourceGroup
@@ -17,16 +18,16 @@
             protocol: TCP
         state: present
       register: aci
-      when: action == "Create"
+      when: user_action == "Create"
 
     - name: Get ACI details
       azure_rm_containerinstance_info:
         resource_group: myResourceGroup
         name: myACI
       register: aci_info
-      when: action == "Create"
+      when: user_action == "Create"
 
     - name: Print ACI URL
       debug:
         msg: "ACI URL: http://{{ aci_info.ansible_facts.azure_containerinstances[0].ip_address }}:80"
-      when: action == "Create"
+      when: user_action == "Create"
