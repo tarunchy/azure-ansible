@@ -1,11 +1,9 @@
 ---
-- name: Ensure Azure Resource Group Exists
+- name: Ensure Azure Resource Group exists
   hosts: localhost
   tasks:
-    - name: Ensure resource group
+    - name: Ensure resource group is present
       azure_rm_resourcegroup:
         name: myResourceGroup
         location: westus2
-      register: rg
-    - debug:
-        msg: "Resource Group {{ rg.state }} in {{ rg.location }}"
+        state: present
