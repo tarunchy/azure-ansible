@@ -1,6 +1,7 @@
 ---
 - name: Ensure Azure Resource Group exists
   hosts: localhost
+  gather_facts: no
   tasks:
     - name: Fail if action is not Create
       fail:
