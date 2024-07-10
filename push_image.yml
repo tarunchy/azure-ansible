@@ -2,8 +2,22 @@
 - name: Ensure Docker image is in ACR
   hosts: localhost
   gather_facts: no
+  collections:
+    - community.docker
   tasks:
-  
+    - name: Install Docker if not present
+      apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
     - name: Log in to ACR
       shell: az acr login --name myACR
       register: login_result
