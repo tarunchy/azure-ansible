@@ -5,8 +5,29 @@
   vars:
     user_action: "{{ user_action }}"
   tasks:
+    - name: Debug user_action variable
+      debug:
+        msg: "The user_action variable is set to: {{ user_action }}"
+
+    - name: Ensure Azure CLI is installed
+      apt:
+        name: azure-cli
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Log in to Azure CLI
+      shell: az login --service-principal -u "{{ azure_client_id }}" -p "{{ azure_client_secret }}" --tenant "{{ azure_tenant_id }}"
+      register: login_result
+      no_log: true
+      when: user_action == 'Destroy'
+
+    - name: Set Azure subscription
+      shell: az account set --subscription "{{ azure_subscription_id }}"
+      no_log: true
+      when: user_action == 'Destroy'
+
     - name: Ensure resource group is absent
       azure_rm_resourcegroup:
         name: myResourceGroup
         state: absent
-      when: user_action == "Destroy"
+      when: user_action == 'Destroy'
