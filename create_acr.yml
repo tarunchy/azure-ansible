@@ -1,13 +1,15 @@
 ---
-- name: Ensure Azure Container Registry exists
+- name: Ensure Azure Resource Group exists
   hosts: localhost
   tasks:
-    - name: Ensure ACR is present
-      azure_rm_containerregistry:
-        resource_group: myResourceGroup
-        name: myACR
-        sku: Basic
-        admin_user_enabled: true
+    - name: Fail if action is not Create
+      fail:
+        msg: "This playbook can only be run with action='Create'. The provided action is '{{ action }}'."
+      when: action != "Create"
+
+    - name: Ensure resource group is present
+      azure_rm_resourcegroup:
+        name: myResourceGroup
         location: westus2
         state: present
       when: action == "Create"
