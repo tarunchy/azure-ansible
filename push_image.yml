@@ -1,0 +1,25 @@
+---
+- name: Ensure Docker image is in ACR
+  hosts: localhost
+  tasks:
+    - name: Log in to ACR
+      shell: az acr login --name myACR
+      register: login_result
+    - debug:
+        var: login_result
+
+    - name: Pull Docker image from public registry
+      community.docker.docker_image:
+        name: mcr.microsoft.com/azuredocs/aci-helloworld:latest
+        source: pull
+
+    - name: Tag Docker image for ACR
+      community.docker.docker_image:
+        name: myacr.azurecr.io/aci-helloworld:latest
+        source: local
+        tag: mcr.microsoft.com/azuredocs/aci-helloworld:latest
+
+    - name: Push Docker image to ACR
+      community.docker.docker_image:
+        name: myacr.azurecr.io/aci-helloworld:latest
+        push: yes
