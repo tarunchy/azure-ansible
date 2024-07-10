@@ -2,51 +2,12 @@
 - name: Ensure Azure Resource Group exists
   hosts: localhost
   gather_facts: no
-  vars:
-    user_action: "{{ user_action }}"
+
   tasks:
-    - name: Gather OS family fact
-      setup:
-        filter: ansible_os_family
-      when: user_action == 'Create'
-
-    - name: Debug user_action variable
-      debug:
-        msg: "The user_action variable is set to: {{ user_action }}"
-
-    - name: Ensure required packages are installed
-      become: yes
-      shell: |
-        dnf install -y ca-certificates curl gnupg2 dnf-plugins-core
-      when: ansible_os_family == "RedHat" and user_action == 'Create'
-
-    - name: Download and install Microsoft signing key
-      become: yes
-      shell: |
-        curl -sLS https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /etc/pki/rpm-gpg/microsoft.asc.gpg > /dev/null
-        chmod go+r /etc/pki/rpm-gpg/microsoft.asc.gpg
-      when: ansible_os_family == "RedHat" and user_action == 'Create'
-
-    - name: Add Azure CLI repository
-      become: yes
-      shell: |
-        echo '[azure-cli]' > /etc/yum.repos.d/azure-cli.repo
-        echo 'name=Azure CLI' >> /etc/yum.repos.d/azure-cli.repo
-        echo 'baseurl=https://packages.microsoft.com/yumrepos/azure-cli' >> /etc/yum.repos.d/azure-cli.repo
-        echo 'enabled=1' >> /etc/yum.repos.d/azure-cli.repo
-        echo 'gpgcheck=1' >> /etc/yum.repos.d/azure-cli.repo
-        echo 'gpgkey=https://packages.microsoft.com/keys/microsoft.asc' >> /etc/yum.repos.d/azure-cli.repo
-      when: ansible_os_family == "RedHat" and user_action == 'Create'
-
-    - name: Install Azure CLI
-      become: yes
-      shell: |
-        dnf install -y azure-cli
-      when: ansible_os_family == "RedHat" and user_action == 'Create'
-
+  
     - name: Ensure resource group is present
       azure_rm_resourcegroup:
         name: myResourceGroup
         location: westus2
         state: present
-      when: user_action == 'Create'
+     
