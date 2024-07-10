@@ -1,12 +1,15 @@
 ---
-- name: Ensure Azure Resource Group exists
+- name: Ensure Azure Container Registry exists
   hosts: localhost
   gather_facts: no
   tasks:
 
-    - name: Ensure resource group is present
-      azure_rm_resourcegroup:
-        name: myResourceGroup
+    - name: Ensure ACR is present
+      azure_rm_containerregistry:
+        resource_group: myResourceGroup
+        name: myACR
+        sku: Basic
+        admin_user_enabled: true
         location: westus2
         state: present
-      when: action == "Create"
+      when: user_action == "Create"
