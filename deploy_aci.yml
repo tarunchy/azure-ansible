@@ -9,14 +9,15 @@
       azure.azcollection.azure_rm_containerinstance:
         resource_group: myResourceGroup
         name: myACI
-        image: mcr.microsoft.com/azuredocs/aci-helloworld:latest
-        location: westus2
         os_type: Linux
-        cpu_cores: 1
-        memory_in_gb: 1.5
-        ports:
-          - port: 80
-            protocol: TCP
+        ip_address: public
+        location: westus2
+        containers:
+          - name: mycontainer1
+            image: mcr.microsoft.com/azuredocs/aci-helloworld:latest
+            memory: 1.5
+            ports:
+              - 80
         state: present
       register: aci_result
       when: user_action == "Create"
