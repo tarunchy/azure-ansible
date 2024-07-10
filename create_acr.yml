@@ -1,0 +1,14 @@
+---
+- name: Ensure Azure Container Registry Exists
+  hosts: localhost
+  tasks:
+    - name: Ensure ACR
+      azure_rm_containerregistry:
+        resource_group: myResourceGroup
+        name: myACR
+        sku: Basic
+        admin_user_enabled: true
+        location: westus2
+      register: acr
+    - debug:
+        msg: "Container Registry {{ acr.name }} in {{ acr.location }}"
