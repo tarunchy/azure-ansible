@@ -15,7 +15,6 @@
         name: docker.io
         state: present
         update_cache: yes
-      when: docker_installed.rc != 0 and ansible_os_family == "Debian"
 
     - name: Start Docker service
       service:
