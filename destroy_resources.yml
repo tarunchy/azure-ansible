@@ -2,6 +2,11 @@
 - name: Destroy Azure Resource Group and its contents
   hosts: localhost
   tasks:
+    - name: Fail if action is not Destroy
+      fail:
+        msg: "This playbook can only be run with action='Destroy'. The provided action is '{{ action }}'."
+      when: action != "Destroy"
+
     - name: Ensure resource group is absent
       azure_rm_resourcegroup:
         name: myResourceGroup
