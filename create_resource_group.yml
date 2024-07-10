@@ -16,7 +16,7 @@
 
     - name: Ensure Azure CLI is installed using curl
       become: yes
-      shell: curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+      shell: curl -sL https://aka.ms/InstallAzureCLIDeb | bash
       when: user_action == 'Create'
 
     - name: Ensure resource group is present
