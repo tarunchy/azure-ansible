@@ -1,0 +1,8 @@
+---
+- name: Destroy Azure Resource Group and its contents
+  hosts: localhost
+  tasks:
+    - name: Ensure resource group is absent
+      azure_rm_resourcegroup:
+        name: myResourceGroup
+        state: absent
