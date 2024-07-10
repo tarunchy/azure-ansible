@@ -37,5 +37,6 @@
 
     - name: Print ACI URL
       debug:
-        msg: "ACI URL: http://{{ aci_info.azure_containerinstances[0].fqdn }}"
+        msg: "ACI URL: http://{{ aci_info.azure_containerinstances[0].ip_address | default('Not Available') }}"
       when: user_action == "Create"
+      failed_when: false
