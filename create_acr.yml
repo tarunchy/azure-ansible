@@ -1,48 +1,16 @@
 ---
-- name: Ensure Azure Resource Group and ACR exists
+- name: Ensure Azure Container Registry exists
   hosts: localhost
   gather_facts: no
-  vars:
-    user_action: "{{ user_action }}"
+  collections:
+    - azure.azcollection
   tasks:
-    - name: Debug user_action variable
-      debug:
-        msg: "The user_action variable is set to: {{ user_action }}"
-
-    - name: Test simple condition
-      debug:
-        msg: "This is a test message for create action."
-      when: user_action == 'Create'
-
-    - name: Ensure Azure CLI is installed
-      apt:
-        name: azure-cli
-        state: present
-
-    - name: Log in to Azure CLI
-      shell: az login --service-principal -u "{{ azure_client_id }}" -p "{{ azure_client_secret }}" --tenant "{{ azure_tenant_id }}"
-      register: login_result
-      no_log: true
-      when: user_action == 'Create'
-
-    - name: Set Azure subscription
-      shell: az account set --subscription "{{ azure_subscription_id }}"
-      no_log: true
-      when: user_action == 'Create'
-
-    - name: Ensure resource group is present
-      azure_rm_resourcegroup:
-        name: myResourceGroup
-        location: westus2
-        state: present
-      when: user_action == 'Create'
-
     - name: Ensure ACR is present
-      azure_rm_containerregistry:
+      azure.azcollection.azure_rm_containerregistry:
         resource_group: myResourceGroup
         name: myACR
         sku: Basic
         admin_user_enabled: true
         location: westus2
         state: present
-      when: user_action == 'Create'
+      when: user_action == "Create"
