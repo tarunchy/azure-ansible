@@ -8,7 +8,7 @@
     - name: Gather OS family fact
       setup:
         filter: ansible_os_family
-      when: user_action == 'Create'
+
 
     - name: Debug user_action variable
       debug:
@@ -27,4 +27,4 @@
         name: myResourceGroup
         location: westus2
         state: present
-      when: user_action == 'Create'
+
