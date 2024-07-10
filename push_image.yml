@@ -5,21 +5,23 @@
     - name: Log in to ACR
       shell: az acr login --name myACR
       register: login_result
-    - debug:
-        var: login_result
+      when: action == "Create"
 
     - name: Pull Docker image from public registry
       community.docker.docker_image:
         name: mcr.microsoft.com/azuredocs/aci-helloworld:latest
         source: pull
+      when: action == "Create"
 
     - name: Tag Docker image for ACR
       community.docker.docker_image:
         name: myacr.azurecr.io/aci-helloworld:latest
         source: local
         tag: mcr.microsoft.com/azuredocs/aci-helloworld:latest
+      when: action == "Create"
 
     - name: Push Docker image to ACR
       community.docker.docker_image:
         name: myacr.azurecr.io/aci-helloworld:latest
         push: yes
+      when: action == "Create"
