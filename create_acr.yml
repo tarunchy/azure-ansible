@@ -1,5 +1,5 @@
 ---
-- name: Ensure Azure Resource Group exists
+- name: Ensure Azure Resource Group and ACR exists
   hosts: localhost
   gather_facts: no
   vars:
@@ -8,6 +8,11 @@
     - name: Debug user_action variable
       debug:
         msg: "The user_action variable is set to: {{ user_action }}"
+
+    - name: Test simple condition
+      debug:
+        msg: "This is a test message for create action."
+      when: user_action == 'Create'
 
     - name: Ensure Azure CLI is installed
       apt:
@@ -29,6 +34,16 @@
     - name: Ensure resource group is present
       azure_rm_resourcegroup:
         name: myResourceGroup
+        location: westus2
+        state: present
+      when: user_action == 'Create'
+
+    - name: Ensure ACR is present
+      azure_rm_containerregistry:
+        resource_group: myResourceGroup
+        name: myACR
+        sku: Basic
+        admin_user_enabled: true
         location: westus2
         state: present
       when: user_action == 'Create'
