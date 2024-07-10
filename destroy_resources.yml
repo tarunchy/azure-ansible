@@ -1,6 +1,7 @@
 ---
 - name: Destroy Azure Resource Group and its contents
   hosts: localhost
+  gather_facts: no
   tasks:
     - name: Fail if action is not Destroy
       fail:
