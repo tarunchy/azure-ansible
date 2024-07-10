@@ -5,6 +5,10 @@
   vars:
     user_action: "{{ user_action }}"
   tasks:
+    - name: Debug user_action variable
+      debug:
+        msg: "The user_action variable is set to: {{ user_action }}"
+
     - name: Ensure resource group is present
       azure_rm_resourcegroup:
         name: myResourceGroup
