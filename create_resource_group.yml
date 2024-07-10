@@ -24,6 +24,7 @@
           - dnf-plugins-core
         state: present
         update_cache: yes
+        use_backend: dnf
       when: ansible_os_family == "RedHat" and user_action == 'Create'
 
     - name: Download and install Microsoft signing key
@@ -49,6 +50,7 @@
       dnf:
         name: azure-cli
         state: present
+        use_backend: dnf
       when: ansible_os_family == "RedHat" and user_action == 'Create'
 
     - name: Ensure resource group is present
