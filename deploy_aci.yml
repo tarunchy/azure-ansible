@@ -30,5 +30,5 @@
 
     - name: Print ACI URL
       debug:
-        msg: "ACI URL: http://{{ aci_info.ansible_facts.azure_containerinstances[0].ip_address }}:80"
+        msg: "ACI URL: http://{{ aci_info.ansible_facts.azure_containerinstances[0].ip_address }}"
       when: user_action == "Create"
