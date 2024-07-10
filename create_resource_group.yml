@@ -2,10 +2,12 @@
 - name: Ensure Azure Resource Group exists
   hosts: localhost
   gather_facts: no
-
+  collections:
+    - azure.azcollection
   tasks:
     - name: Ensure resource group is present
       azure.azcollection.azure_rm_resourcegroup:
         name: myResourceGroup
         location: westus2
         state: present
+      when: user_action == "Create"
