@@ -16,15 +16,8 @@
 
     - name: Ensure required packages are installed
       become: yes
-      dnf:
-        name:
-          - ca-certificates
-          - curl
-          - gnupg2
-          - dnf-plugins-core
-        state: present
-        update_cache: yes
-        use_backend: dnf
+      shell: |
+        dnf install -y ca-certificates curl gnupg2 dnf-plugins-core
       when: ansible_os_family == "RedHat" and user_action == 'Create'
 
     - name: Download and install Microsoft signing key
@@ -47,10 +40,8 @@
 
     - name: Install Azure CLI
       become: yes
-      dnf:
-        name: azure-cli
-        state: present
-        use_backend: dnf
+      shell: |
+        dnf install -y azure-cli
       when: ansible_os_family == "RedHat" and user_action == 'Create'
 
     - name: Ensure resource group is present
