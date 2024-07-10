@@ -2,8 +2,9 @@
 - name: Ensure Azure Resource Group exists
   hosts: localhost
   gather_facts: no
+  vars:
+    user_action: "{{ user_action }}"
   tasks:
-
     - name: Ensure resource group is present
       azure_rm_resourcegroup:
         name: myResourceGroup
