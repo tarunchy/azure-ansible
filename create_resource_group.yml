@@ -7,3 +7,4 @@
         name: myResourceGroup
         location: westus2
         state: present
+      when: action == "Create"
