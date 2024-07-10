@@ -16,39 +16,50 @@
 
     - name: Ensure required packages are installed
       become: yes
-      dnf:
+      apt:
         name:
+          - apt-transport-https
           - ca-certificates
           - curl
-          - gnupg2
-          - dnf-plugins-core
+          - gnupg
+          - lsb-release
         state: present
         update_cache: yes
+      when: ansible_os_family == "RedHat" and user_action == 'Create'
+
+    - name: Create directory for Microsoft keys
+      become: yes
+      file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
       when: ansible_os_family == "RedHat" and user_action == 'Create'
 
     - name: Download and install Microsoft signing key
       become: yes
       shell: |
-        curl -sLS https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /etc/pki/rpm-gpg/microsoft.asc.gpg > /dev/null
-        chmod go+r /etc/pki/rpm-gpg/microsoft.asc.gpg
+        curl -sLS https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /etc/apt/keyrings/microsoft.gpg > /dev/null
+        chmod go+r /etc/apt/keyrings/microsoft.gpg
       when: ansible_os_family == "RedHat" and user_action == 'Create'
 
     - name: Add Azure CLI repository
       become: yes
       shell: |
-        echo -e "[azure-cli]
-name=Azure CLI
-baseurl=https://packages.microsoft.com/yumrepos/azure-cli
-enabled=1
-gpgcheck=1
-gpgkey=https://packages.microsoft.com/keys/microsoft.asc" | tee /etc/yum.repos.d/azure-cli.repo
+        AZ_DIST=$(lsb_release -cs)
+        echo "Types: deb" > /etc/apt/sources.list.d/azure-cli.sources
+        echo "URIs: https://packages.microsoft.com/repos/azure-cli/" >> /etc/apt/sources.list.d/azure-cli.sources
+        echo "Suites: ${AZ_DIST}" >> /etc/apt/sources.list.d/azure-cli.sources
+        echo "Components: main" >> /etc/apt/sources.list.d/azure-cli.sources
+        echo "Architectures: $(dpkg --print-architecture)" >> /etc/apt/sources.list.d/azure-cli.sources
+        echo "Signed-By: /etc/apt/keyrings/microsoft.gpg" >> /etc/apt/sources.list.d/azure-cli.sources
       when: ansible_os_family == "RedHat" and user_action == 'Create'
 
-    - name: Install Azure CLI
+    - name: Update apt cache and install Azure CLI
       become: yes
-      dnf:
+      apt:
         name: azure-cli
         state: present
+        update_cache: yes
       when: ansible_os_family == "RedHat" and user_action == 'Create'
 
     - name: Ensure resource group is present
