@@ -14,10 +14,53 @@
       debug:
         msg: "The user_action variable is set to: {{ user_action }}"
 
-    - name: Ensure Azure CLI is installed using curl
+    - name: Ensure required packages are installed
       become: yes
-      shell: curl -sL https://aka.ms/InstallAzureCLIDeb | bash
-      when: user_action == 'Create'
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+        state: present
+        update_cache: yes
+      when: ansible_os_family == "Debian" and user_action == 'Create'
+
+    - name: Create directory for Microsoft keys
+      become: yes
+      file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+      when: ansible_os_family == "Debian" and user_action == 'Create'
+
+    - name: Download and install Microsoft signing key
+      become: yes
+      shell: |
+        curl -sLS https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /etc/apt/keyrings/microsoft.gpg > /dev/null
+        chmod go+r /etc/apt/keyrings/microsoft.gpg
+      when: ansible_os_family == "Debian" and user_action == 'Create'
+
+    - name: Add Azure CLI repository
+      become: yes
+      shell: |
+        AZ_DIST=$(lsb_release -cs)
+        echo "Types: deb
+URIs: https://packages.microsoft.com/repos/azure-cli/
+Suites: ${AZ_DIST}
+Components: main
+Architectures: $(dpkg --print-architecture)
+Signed-by: /etc/apt/keyrings/microsoft.gpg" | tee /etc/apt/sources.list.d/azure-cli.sources
+      when: ansible_os_family == "Debian" and user_action == 'Create'
+
+    - name: Update apt cache and install Azure CLI
+      become: yes
+      apt:
+        name: azure-cli
+        state: present
+        update_cache: yes
+      when: ansible_os_family == "Debian" and user_action == 'Create'
 
     - name: Ensure resource group is present
       azure_rm_resourcegroup:
