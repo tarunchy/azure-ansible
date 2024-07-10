@@ -9,4 +9,5 @@
       azure.azcollection.azure_rm_resourcegroup:
         name: myResourceGroup
         state: absent
+        force_delete_nonempty: yes
       when: user_action == "Destroy"
