@@ -1,11 +1,29 @@
 ---
 - name: Destroy Azure resources created for the demo
   hosts: localhost
+  gather_facts: no
+  collections:
+    - azure.azcollection
   vars:
     resource_group: "myResourceGroup"
+    function_app_name: "myLinuxFunctionAppDemo"
+    app_service_plan: "myLinuxAppServicePlanDemo"
+    storage_account_name: "mystoragedemolinux"
   tasks:
-  
-    - name: Delete the resource group (this deletes all resources within it)
+
+    - name: Delete the Function App using Azure CLI
+      ansible.builtin.command:
+        cmd: "az functionapp delete --name {{ function_app_name }} --resource-group {{ resource_group }}"
+
+    - name: Delete the App Service Plan using Azure CLI
+      ansible.builtin.command:
+        cmd: "az appservice plan delete --name {{ app_service_plan }} --resource-group {{ resource_group }} --yes"
+
+    - name: Delete the Storage Account using Azure CLI
+      ansible.builtin.command:
+        cmd: "az storage account delete --name {{ storage_account_name }} --resource-group {{ resource_group }} --yes"
+
+    - name: Delete the resource group
       azure.azcollection.azure_rm_resourcegroup:
         name: "{{ resource_group }}"
         state: absent
