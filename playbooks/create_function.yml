@@ -41,13 +41,31 @@
         os_type: "Windows"
         https_only: true
 
-    - name: Deploy the Python function to the Function App
-      azure.azcollection.azure_rm_functionappslot:
+    - name: Prepare function code for deployment
+      synchronize:
+        src: "{{ function_code_path }}/"
+        dest: "/tmp/function_code/"
+        mode: pull
+        delete: no
+
+    - name: Zip the function code
+      archive:
+        path: "/tmp/function_code/"
+        dest: "/tmp/function_code.zip"
+        format: zip
+
+    - name: Deploy the function code to Azure
+      azure.azcollection.azure_rm_functionappdeployment:
         resource_group: "{{ resource_group }}"
         name: "{{ function_app_name }}"
-        slot: "production"
-        src_path: "{{ function_code_path }}"
+        src: "/tmp/function_code.zip"
+
+    - name: Restart the Azure Function App
+      azure.azcollection.azure_rm_functionapp:
+        resource_group: "{{ resource_group }}"
+        name: "{{ function_app_name }}"
+        state: restarted
 
     - name: Return the function URL
       debug:
-        msg: "Your function URL is: https://{{ function_app_name }}.azurewebsites.net/api/HttpTrigger1"
+        msg: "Your function URL is: https://{{ function_app_name }}.azurewebsites.net/api/hello"
