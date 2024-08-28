@@ -1,0 +1,15 @@
+---
+- name: Destroy Azure resources created for the demo
+  hosts: localhost
+  vars:
+    resource_group: "myResourceGroup"
+  tasks:
+  
+    - name: Delete the resource group (this deletes all resources within it)
+      azure.azcollection.azure_rm_resourcegroup:
+        name: "{{ resource_group }}"
+        state: absent
+
+    - name: Confirm deletion
+      debug:
+        msg: "Resource group '{{ resource_group }}' and all associated resources have been deleted."
