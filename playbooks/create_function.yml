@@ -1,13 +1,14 @@
 ---
-- name: Create and deploy Azure Function App
+- name: Create and deploy Azure Function App on Linux Consumption Plan
   hosts: localhost
   vars:
     resource_group: "myResourceGroup"
     location: "East US"
-    function_app_name: "myFunctionAppDemo"
-    storage_account_name: "mystorageaccountdemo"
-    app_service_plan: "myAppServicePlanDemo"
+    function_app_name: "myLinuxFunctionAppDemo"
+    storage_account_name: "mystoragedemolinux"
+    app_service_plan: "myLinuxAppServicePlanDemo"
     function_code_path: "../function_code"
+    zip_file_path: "/tmp/function_code.zip"
   tasks:
 
     - name: Create a resource group
@@ -23,42 +24,35 @@
         kind: "StorageV2"
         location: "{{ location }}"
 
-    - name: Create a Consumption Plan
+    - name: Create a Linux Consumption Plan
       azure.azcollection.azure_rm_appserviceplan:
         resource_group: "{{ resource_group }}"
         name: "{{ app_service_plan }}"
         sku:
           tier: "Dynamic"
           size: "Y1"
-        is_linux: false
+        is_linux: true
 
-    - name: Create a Function App
+    - name: Create a Function App on Linux
       azure.azcollection.azure_rm_functionapp:
         resource_group: "{{ resource_group }}"
         name: "{{ function_app_name }}"
         plan: "{{ app_service_plan }}"
         storage_account_name: "{{ storage_account_name }}"
-        os_type: "Windows"
+        os_type: "Linux"
+        runtime: "python|3.9"
         https_only: true
 
-    - name: Prepare function code for deployment
-      synchronize:
-        src: "{{ function_code_path }}/"
-        dest: "/tmp/function_code/"
-        mode: pull
-        delete: no
-
-    - name: Zip the function code
-      archive:
-        path: "/tmp/function_code/"
-        dest: "/tmp/function_code.zip"
-        format: zip
+    - name: Zip the function code using shell command
+      ansible.builtin.command:
+        cmd: "zip -r {{ zip_file_path }} ."
+        chdir: "{{ function_code_path }}"
 
     - name: Deploy the function code to Azure
       azure.azcollection.azure_rm_functionappdeployment:
         resource_group: "{{ resource_group }}"
         name: "{{ function_app_name }}"
-        src: "/tmp/function_code.zip"
+        src: "{{ zip_file_path }}"
 
     - name: Restart the Azure Function App
       azure.azcollection.azure_rm_functionapp:
